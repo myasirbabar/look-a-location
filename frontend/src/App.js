@@ -10,6 +10,7 @@ import NewPlace  from './Places/pages/NewPlace';
 import MainNavigation from './Shared/components/Navigation/MainNavigation';
 import Users from './Users/pages/Users';
 import UserPlaces from './Places/pages/UserPlaces';
+import UpdatePlace from './Places/pages/UpdatePlace';
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
           <Route path='/:userId/places' exact element = {<UserPlaces />} />
 
           <Route path='/new/places' exact element = {<NewPlace />} />
+
+          <Route path='/places/:pid' element = {<UpdatePlace />} />
           
           {/* To Redirect we use Navigate as Route element */}
           <Route path='*' element = {<Navigate to = "/" replace />}/>

@@ -7,7 +7,7 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../Shared/components/util/Validators";
 
-import "./NewPlace.css";
+import "./PlaceForm.css";
 
 const formReducer = (state, action) => {
   switch (action.type) {
