@@ -1,4 +1,5 @@
 import React from "react";
+import { useForm } from "../../Shared/hooks/form-hook";
 import Input from "../../Shared/components/FormElements/Input";
 import Button from "../../Shared/components/FormElements/Button";
 import { useParams } from "react-router-dom";
@@ -9,9 +10,9 @@ import {
 
 import "./PlaceForm.css";
 
-
 const UpdatePlace = (props) => {
   const placeId = useParams().pid;
+
   const DUMMY_PLACES = [
     {
       id: "p1",
@@ -44,6 +45,26 @@ const UpdatePlace = (props) => {
   ];
 
   const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+
+  const [formstate, inputHandler] = useForm(
+    {
+      title: {
+        value: identifiedPlace.title,
+        isValid: true,
+      },
+      description: {
+        value: identifiedPlace.description,
+        isValid: true,
+      },
+    },
+    true
+  );
+
+  const placeUpdateSubmitHandler = event =>{
+    event.preventDefault();
+    console.log(formstate.inputs);
+  }
+  
   if (!identifiedPlace) {
     return (
       <div className="center">
@@ -52,31 +73,33 @@ const UpdatePlace = (props) => {
     );
   }
   return (
-    <form className="place-form">
+    <form className="place-form"  onSubmit={placeUpdateSubmitHandler}>
       <Input
         id="title"
         element="input"
         type="text"
         label="Title"
-        value = {identifiedPlace.title}
-        onInput = {() => {}}
+        value={formstate.inputs.title.value}
+        onInput={inputHandler}
         validators={[VALIDATOR_REQUIRE()]}
         errorText="Please Input a valid Title"
-        valid = {true}
+        valid={formstate.inputs.title.isValid}
       />
 
       <Input
         id="description"
         element="textarea"
         label="Description"
-        value = {identifiedPlace.description}
-        onInput = {() => {}}
+        value={formstate.inputs.description.value}
+        onInput={inputHandler}
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="Please Input a valid Description. Min 5 Characters"
-        valid = {true}
+        valid={formstate.inputs.description.isValid}
       />
 
-      <Button type = "submit" disabled = {true}>Update Place</Button>
+      <Button type="submit" disabled={!formstate.isValid}>
+        Update Place
+      </Button>
     </form>
   );
 };
