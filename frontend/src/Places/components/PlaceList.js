@@ -10,7 +10,7 @@ const PlaceList = ({listPlaces}) => {
             <div className='place-list center'>
                 <Card>
                     <h2>No PLace Exist... May be Create One</h2>
-                    <Button inverse>Create Place</Button>
+                    <Button inverse to = "/new/places">Create Place</Button>
                 </Card>
             </div>
         )

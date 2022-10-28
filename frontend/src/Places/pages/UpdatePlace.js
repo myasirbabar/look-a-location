@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "../../Shared/hooks/form-hook";
 import { useEffect } from "react";
 import Input from "../../Shared/components/FormElements/Input";
+import Card from '../../Shared/components/UIElements/Card'
+
 import Button from "../../Shared/components/FormElements/Button";
 import { useParams } from "react-router-dom";
 import {
@@ -45,6 +47,8 @@ const UpdatePlace = (props) => {
       },
     },
   ];
+  
+  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
 
   const [formstate, inputHandler, setFormData] = useForm(
     {
@@ -61,42 +65,49 @@ const UpdatePlace = (props) => {
   );
 
   
-  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+  
   useEffect(()=>{
-    setFormData(
-      {
-        title: {
-          value: identifiedPlace.title,
-          isValid: true,
-        },
-        description: {
-          value: identifiedPlace.description,
-          isValid: true,
-        },
-      }, true
-    )
+    if(identifiedPlace){
+      setFormData(
+        {
+          title: {
+            value: identifiedPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: identifiedPlace.description,
+            isValid: true,
+          },
+        }, true
+      );
+    }
 
     setIsLoading(false)
   
-  }, [identifiedPlace.title, identifiedPlace.description, setFormData])
+  }, [identifiedPlace && identifiedPlace.title ,identifiedPlace && identifiedPlace.description , setFormData])
+
+  if (!identifiedPlace) {
+    return (
+      <div className="center">
+        <Card>
+          <h2>No Place With This Id Found</h2>
+        </Card>
+      </div>
+    );
+  }
 
   const placeUpdateSubmitHandler = event =>{
     event.preventDefault();
     console.log(formstate.inputs);
   }
   
-  if (!identifiedPlace) {
-    return (
-      <div className="center">
-        <h2>No Place With This Id Found</h2>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
       <div className="center">
-        <h2>Loading....</h2>
+        <Card>
+          <h2>Loading....</h2>
+        </Card>
       </div>
     );
   }
