@@ -11,6 +11,7 @@ import MainNavigation from './Shared/components/Navigation/MainNavigation';
 import Users from './Users/pages/Users';
 import UserPlaces from './Places/pages/UserPlaces';
 import UpdatePlace from './Places/pages/UpdatePlace';
+import Authentication from './Users/pages/Authentication';
 
 const App = () => {
   return (
@@ -22,6 +23,8 @@ const App = () => {
           {/* To render component we use element and bellow syntax */}
           <Route path='/' exact element = {<Users />} />
           
+          <Route path='/auth' exact element = {<Authentication />}/>
+
           <Route path='/:userId/places' exact element = {<UserPlaces />} />
 
           <Route path='/new/places' exact element = {<NewPlace />} />
