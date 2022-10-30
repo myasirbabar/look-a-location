@@ -40,7 +40,7 @@ const App = () => {
 
         <Route path="/:userId/places" exact element={<UserPlaces />} />
 
-        <Route path="/new/places" exact element={<NewPlace />} />
+        <Route path="places/new" exact element={<NewPlace />} />
 
         <Route path="/places/:pid" element={<UpdatePlace />} />
 

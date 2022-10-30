@@ -3,20 +3,22 @@ import Card from "../../Shared/components/UIElements/Card";
 import Button from "../../Shared/components/FormElements/Button";
 import Modal from "../../Shared/components/UIElements/Modal";
 import Map from "../../Shared/components/UIElements/Map";
-
-import { useState } from "react";
+import { AuthContext } from "../../Shared/context/auth-context";
+import { useState, useContext } from "react";
 
 import "./PlaceItem.css";
 
 const PlaceItem = ({ place }) => {
+  const auth = useContext(AuthContext);
+
   const [showMap, setShowMap] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const showDeleteWarningHandler = () => setShowConfirm(true);
   const cancelDeleteWarningHandler = () => setShowConfirm(false);
   const confirmDeleteHandler = () => {
-    console.log("Deleteing....")
-    setShowConfirm(false)
+    console.log("Deleteing....");
+    setShowConfirm(false);
   };
 
   const openMapHandler = () => setShowMap(true);
@@ -79,10 +81,14 @@ const PlaceItem = ({ place }) => {
             <Button inverse onClick={openMapHandler}>
               View On Map
             </Button>
-            <Button to={`/places/${place.id}`}>Edit</Button>
-            <Button danger onClick={showDeleteWarningHandler}>
-              Delete
-            </Button>
+            {auth.isLoggedIn && (
+              <Button to={`/places/${place.id}`}>Edit</Button>
+            )}
+            {auth.isLoggedIn && (
+              <Button danger onClick={showDeleteWarningHandler}>
+                Delete
+              </Button>
+            )}
           </div>
         </Card>
       </li>
