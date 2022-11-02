@@ -7,7 +7,7 @@ const app = express();
 const port = 5000;
 
 // Register MiddleWare For Components
-app.use(placesRoutes); // Places
+app.use('/api/places',placesRoutes); // Places
 
 
 // INIT SERVER
