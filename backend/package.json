@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend For Look A Location APP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myasirbabar/look-a-location.git"
+  },
+  "author": "Muhammad Yasir",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/myasirbabar/look-a-location/issues"
+  },
+  "homepage": "https://github.com/myasirbabar/look-a-location#readme",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
