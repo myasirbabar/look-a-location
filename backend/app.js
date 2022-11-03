@@ -9,6 +9,15 @@ const port = 5000;
 // Register MiddleWare For Components
 app.use('/api/places',placesRoutes); // Places
 
+// Error Middleware
+app.use((error, req,res,next)=>{
+  if(res.headerSent){
+    return next(error);
+  }
+  
+  res.status(error.code || 500)
+  res.json({message: error.message || "Unknown Error Occured"});
+})
 
 // INIT SERVER
 app.listen(port, () =>
