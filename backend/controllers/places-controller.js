@@ -1,5 +1,5 @@
 const HttpError = require("../models/http-error");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const DUMMY_PLACES = [
   {
@@ -58,26 +58,54 @@ const getPlaceByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-
-const createPlace = (req, res,next)=>{
+const createPlace = (req, res, next) => {
   console.log("Create Place Called");
-  const {title, description, coordinates, address, creator} = req.body;
+  const { title, description, coordinates, address, creator } = req.body;
 
   const createdPlace = {
     id: uuidv4(),
     title,
     description,
-    location:coordinates,
+    location: coordinates,
     address,
-    creator
-  }
+    creator,
+  };
 
   DUMMY_PLACES.push(createdPlace);
 
-  res.status(201).json({place:createdPlace});
+  res.status(201).json({ place: createdPlace });
+};
 
-}
+const updatePlace = (req, res, next) => {
+  console.log("Update Place Called");
+  const { title, description } = req.body;
 
-exports.getPlaceById = getPlaceById
-exports.getPlaceByUserId = getPlaceByUserId
-exports.createPlace = createPlace
+  const UpdatedPlace = { ...DUMMY_PLACES.find((p) => p.id === req.params.pid) };
+  const placeIndex = DUMMY_PLACES.findIndex(p => p.id === req.params.pid);
+
+  UpdatedPlace.title = title;
+  UpdatedPlace.description = description;
+  DUMMY_PLACES[placeIndex] = updatePlace;
+  
+  res.status(200).json({ place });
+};
+
+const deletePlace = (req, res, next) => {
+  console.log("Delete Place Called");
+  const { title, description } = req.body;
+
+  const UpdatedPlace = { ...DUMMY_PLACES.find((p) => p.id === req.params.pid) };
+  const placeIndex = DUMMY_PLACES.findIndex(p => p.id === req.params.pid);
+
+  UpdatedPlace.title = title;
+  UpdatedPlace.description = description;
+
+  
+  res.status(201).json({ place });
+};
+
+exports.getPlaceById = getPlaceById;
+exports.getPlaceByUserId = getPlaceByUserId;
+exports.createPlace = createPlace;
+exports.updatePlace = updatePlace;
+exports.deletePlace = deletePlace;
