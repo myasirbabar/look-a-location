@@ -6,6 +6,9 @@ const placesRoutes = require('./routes/places-routes')
 const app = express();
 const port = 5000;
 
+// Body Parser
+app.use(bodyParser.json())
+
 // Register MiddleWare For Components
 app.use('/api/places',placesRoutes); // Places
 
@@ -18,6 +21,7 @@ app.use((error, req,res,next)=>{
   res.status(error.code || 500)
   res.json({message: error.message || "Unknown Error Occured"});
 })
+
 
 // INIT SERVER
 app.listen(port, () =>
