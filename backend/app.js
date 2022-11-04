@@ -1,6 +1,6 @@
 const bodyParser = require("body-parser");
 const express = require("express");
-
+const HttpError = require("./models/http-error")
 const placesRoutes = require('./routes/places-routes')
 
 const app = express();
@@ -9,8 +9,17 @@ const port = 5000;
 // Body Parser
 app.use(bodyParser.json())
 
-// Register MiddleWare For Components
+// Register MiddleWare For Places
 app.use('/api/places',placesRoutes); // Places
+
+// Register MiddleWare For Unknown Routes
+app.use((req,res,next)=>{
+
+  const error = new HttpError('Could Not Find This Route ', 404);
+  throw error;
+  
+})
+
 
 // Error Middleware
 app.use((error, req,res,next)=>{
