@@ -1,5 +1,6 @@
 const HttpError = require("../models/http-error");
-const {validationResult} = require("express-validator")
+const { validationResult } = require("express-validator");
+const getAddressCoords = require("../util/location");
 const { v4: uuidv4 } = require("uuid");
 
 let DUMMY_PLACES = [
@@ -59,16 +60,25 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-const createPlace = (req, res, next) => {
+const createPlace = async (req, res, next) => {
   console.log("Create Place Called");
 
   //Validating Express-Validator MiddleWare
   const errors = validationResult(req);
-  if(!errors.isEmpty()){
-    throw new HttpError("Invalid Field Values", 422)
+  if (!errors.isEmpty()) {
+    // With Async We do not use throw
+    return next(new HttpError("Invalid Field Values", 422));
   }
 
-  const { title, description, coordinates, address, creator } = req.body;
+  const { title, description, address, creator } = req.body;
+
+  let coordinates;
+  // getAddressCoordinates might throw error
+  try {
+    coordinates = await getAddressCoords(address);
+  } catch (error) {
+    return next(error);
+  }
 
   const createdPlace = {
     id: uuidv4(),
@@ -89,8 +99,8 @@ const updatePlace = (req, res, next) => {
 
   //Validating Express-Validator MiddleWare
   const errors = validationResult(req);
-  if(!errors.isEmpty()){
-    throw new HttpError("Invalid Field Values", 422)
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid Field Values", 422);
   }
 
   const { title, description } = req.body;
@@ -108,8 +118,8 @@ const updatePlace = (req, res, next) => {
 const deletePlace = (req, res, next) => {
   console.log("Delete Place Called");
 
-  if(!DUMMY_PLACES.find(p=>p.id === req.params.pid)){
-    throw new HttpError("Place With this ID Does not Exist", 404)
+  if (!DUMMY_PLACES.find((p) => p.id === req.params.pid)) {
+    throw new HttpError("Place With this ID Does not Exist", 404);
   }
 
   DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== req.params.pid);
