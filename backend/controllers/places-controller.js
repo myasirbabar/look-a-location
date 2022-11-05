@@ -1,4 +1,5 @@
 const HttpError = require("../models/http-error");
+const {validationResult} = require("express-validator")
 const { v4: uuidv4 } = require("uuid");
 
 let DUMMY_PLACES = [
@@ -60,6 +61,13 @@ const getPlacesByUserId = (req, res, next) => {
 
 const createPlace = (req, res, next) => {
   console.log("Create Place Called");
+
+  //Validating Express-Validator MiddleWare
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    throw new HttpError("Invalid Field Values", 422)
+  }
+
   const { title, description, coordinates, address, creator } = req.body;
 
   const createdPlace = {
@@ -78,6 +86,13 @@ const createPlace = (req, res, next) => {
 
 const updatePlace = (req, res, next) => {
   console.log("Update Place Called");
+
+  //Validating Express-Validator MiddleWare
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    throw new HttpError("Invalid Field Values", 422)
+  }
+
   const { title, description } = req.body;
 
   const UpdatedPlace = { ...DUMMY_PLACES.find((p) => p.id === req.params.pid) };
@@ -92,6 +107,10 @@ const updatePlace = (req, res, next) => {
 
 const deletePlace = (req, res, next) => {
   console.log("Delete Place Called");
+
+  if(!DUMMY_PLACES.find(p=>p.id === req.params.pid)){
+    throw new HttpError("Place With this ID Does not Exist", 404)
+  }
 
   DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== req.params.pid);
 

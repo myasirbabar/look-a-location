@@ -1,4 +1,5 @@
 const HttpError = require("../models/http-error");
+const {validationResult} = require("express-validator")
 const { v4: uuidv4 } = require("uuid");
 
 const DUMMY_USERS = [
@@ -27,6 +28,13 @@ const getUsers = (req, res, next) => {
 };
 
 const signup = (req, res, next) => {
+
+	//Validating Express-Validator MiddleWare
+	const errors = validationResult(req);
+	if(!errors.isEmpty()){
+	  throw new HttpError("Invalid Field Values", 422)
+	}
+
 	const {name, email, password} = req.body;
 
 	const newUser = {
@@ -36,7 +44,7 @@ const signup = (req, res, next) => {
 		password
 	}
 	
-	if(DUMMY_USERS.find(p => p.email == email)){
+	if(DUMMY_USERS.find(p => p.email === email)){
 		throw HttpError("User Already Exists", 422)
 	}
 
@@ -46,6 +54,13 @@ const signup = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
+	
+	//Validating Express-Validator MiddleWare
+	const errors = validationResult(req);
+	if(!errors.isEmpty()){
+	  throw new HttpError("Invalid Field Values", 422)
+	}
+
 	const {email, password} = req.body;
 
 	const identifiedUser = DUMMY_USERS.find(u=> u.email === email);
