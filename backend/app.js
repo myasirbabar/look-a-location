@@ -2,6 +2,7 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const HttpError = require("./models/http-error")
 const placesRoutes = require('./routes/places-routes')
+const usersRoutes = require('./routes/users-routes')
 
 const app = express();
 const port = 5000;
@@ -11,6 +12,10 @@ app.use(bodyParser.json())
 
 // Register MiddleWare For Places
 app.use('/api/places',placesRoutes); // Places
+
+// Register MiddleWare For Places
+app.use('/api/users',usersRoutes); // Places
+
 
 // Register MiddleWare For Unknown Routes
 app.use((req,res,next)=>{
