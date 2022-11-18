@@ -2,7 +2,7 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const getAddressCoords = require("../util/location");
 const { v4: uuidv4 } = require("uuid");
-const Place = require('../models/place.model')
+const Place = require("../models/place.model");
 
 let DUMMY_PLACES = [
   {
@@ -35,30 +35,36 @@ let DUMMY_PLACES = [
   },
 ];
 
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
   console.log("Get Places Request In Places");
 
   const placeId = req.params.pid;
-  const place = DUMMY_PLACES.find((p) => p.id === placeId);
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    throw new HttpError("Something Went Wrong ! Could not find a place", 500);
+  }
 
   if (!place) {
     throw new HttpError("Could not Find Place with this Id", 404);
   }
 
-  res.json({ place });
+  res.json({ place: place.toObject({ getters: true }) }); // getters = true , to remove _ from _id
 };
 
 const getPlacesByUserId = (req, res, next) => {
   console.log("Get User Places Request In Places");
 
   const userID = req.params.uid;
-  const places = DUMMY_PLACES.filter((p) => {
+  const places = Place.find((p) => {
     return p.creator === userID;
   });
+
   if (!places || places.length === 0) {
     return next(new HttpError("Could Not Find Any Places for this user", 404));
   }
-  res.json({ places });
+  res.json({ places:places.toObject({getters:true}) });
 };
 
 const createPlace = async (req, res, next) => {
@@ -86,17 +92,16 @@ const createPlace = async (req, res, next) => {
     title,
     description,
     address,
-    location:coordinates,
-    image: 'https://pucit.edu.pk/wp-content/uploads/2021/09/dap9_n-1.jpg',
-    creator
+    location: coordinates,
+    image: "https://pucit.edu.pk/wp-content/uploads/2021/09/dap9_n-1.jpg",
+    creator,
   });
 
   // Save in database
-  try{
+  try {
     await createPlace.save();
-  }
-  catch(err){
-    throw new HttpError('Error Creating Place', 500)
+  } catch (err) {
+    throw new HttpError("Error Creating Place", 500);
   }
 
   res.status(201).json({ place: createdPlace });
