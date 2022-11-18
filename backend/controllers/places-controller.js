@@ -2,6 +2,7 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const getAddressCoords = require("../util/location");
 const { v4: uuidv4 } = require("uuid");
+const Place = require('../models/place.model')
 
 let DUMMY_PLACES = [
   {
@@ -80,16 +81,23 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuidv4(),
+  // Creating a place
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
-    creator,
-  };
+    location:coordinates,
+    image: 'https://pucit.edu.pk/wp-content/uploads/2021/09/dap9_n-1.jpg',
+    creator
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  // Save in database
+  try{
+    await createPlace.save();
+  }
+  catch(err){
+    throw new HttpError('Error Creating Place', 500)
+  }
 
   res.status(201).json({ place: createdPlace });
 };
