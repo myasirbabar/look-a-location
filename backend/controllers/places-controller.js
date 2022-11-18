@@ -53,18 +53,25 @@ const getPlaceById = async (req, res, next) => {
   res.json({ place: place.toObject({ getters: true }) }); // getters = true , to remove _ from _id
 };
 
-const getPlacesByUserId = (req, res, next) => {
+const getPlacesByUserId = async (req, res, next) => {
   console.log("Get User Places Request In Places");
 
   const userID = req.params.uid;
-  const places = Place.find((p) => {
-    return p.creator === userID;
-  });
+  let places;
+  try {
+    // Find By Creator Id In DB
+    places = await Place.find({ creator: userID });
+  } catch (error) {
+    throw new HttpError("Fetching Places failed. Please Try Again", 500);
+  }
 
   if (!places || places.length === 0) {
     return next(new HttpError("Could Not Find Any Places for this user", 404));
   }
-  res.json({ places:places.toObject({getters:true}) });
+
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
 };
 
 const createPlace = async (req, res, next) => {
