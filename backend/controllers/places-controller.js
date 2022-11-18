@@ -70,7 +70,7 @@ const getPlacesByUserId = async (req, res, next) => {
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true })),
+    places: places.map((place) => place.toObject({ getters: true })) // since places is a array of places
   });
 };
 
@@ -114,7 +114,7 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-const updatePlace = (req, res, next) => {
+const updatePlace = async (req, res, next) => {
   console.log("Update Place Called");
 
   //Validating Express-Validator MiddleWare
@@ -124,15 +124,28 @@ const updatePlace = (req, res, next) => {
   }
 
   const { title, description } = req.body;
+  const placeId = req.params.pid;
+  let place;
 
-  const UpdatedPlace = { ...DUMMY_PLACES.find((p) => p.id === req.params.pid) };
-  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === req.params.pid);
+  // Getting that place
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    throw new HttpError("Something Went Wrong ! Could not find a place", 500);
+  }
 
-  UpdatedPlace.title = title;
-  UpdatedPlace.description = description;
-  DUMMY_PLACES[placeIndex] = updatePlace;
+  // UPdating Params
+  place.title = title;
+  place.description = description;
 
-  res.status(200).json({ place });
+  // Saved updated place
+  try {
+    await place.save();
+  } catch (error) {
+    throw new HttpError('Something Went Wrong. Could not update place', 500)
+  }
+
+  res.status(200).json({ place: place.toObject({getters: true}) });
 };
 
 const deletePlace = (req, res, next) => {
