@@ -1,76 +1,89 @@
 const HttpError = require("../models/http-error");
-const {validationResult} = require("express-validator")
-const { v4: uuidv4 } = require("uuid");
+const { validationResult } = require("express-validator");
+const User = require("../models/user.model");
 
 const DUMMY_USERS = [
   {
     id: "u1",
     name: "Muhammad Yasir",
     email: "ybabar1@gmail.com",
-	password:"tester1"
+    password: "tester1",
   },
   {
     id: "u2",
     name: "Usama Akram",
     email: "ua@gmail.com",
-	password:"tester2"
+    password: "tester2",
   },
   {
     id: "u3",
     name: "Muhammad Awais",
     email: "awais@gmail.com",
-	password:"tester3"
+    password: "tester3",
   },
 ];
 
 const getUsers = (req, res, next) => {
-	res.json(DUMMY_USERS)
+  res.json(DUMMY_USERS);
 };
 
-const signup = (req, res, next) => {
+const signup = async (req, res, next) => {
+  //Validating Express-Validator MiddleWare
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError("Invalid Field Values", 422));
+  }
 
-	//Validating Express-Validator MiddleWare
-	const errors = validationResult(req);
-	if(!errors.isEmpty()){
-	  throw new HttpError("Invalid Field Values", 422)
-	}
+  const { name, email, password,places } = req.body;
 
-	const {name, email, password} = req.body;
+  // Check if email already exist
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (error) {
+    return next(new HttpError("Sign up Failed ! Please try Again Later", 500));
+  }
 
-	const newUser = {
-		id: uuidv4(),
-		name,
-		email, 
-		password
-	}
-	
-	if(DUMMY_USERS.find(p => p.email === email)){
-		throw HttpError("User Already Exists", 422)
-	}
+  // If Already exist
+  if (existingUser) {
+    return next(new HttpError("User Exists Alredy !", 422));
+  }
 
-	DUMMY_USERS.push(newUser)
+  // Create new User
+  const newUser = new User({
+    name,
+    email,
+    password,
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoOJWdWQyCnVGZ2iMwrA24be1XHiruDZIf71lMcul7&s",
+    places,
+  });
 
-	res.status(201).json({message: "User Added ! ", DUMMY_USERS})
+  try {
+    await newUser.save();
+  } catch (error) {
+    return next(new HttpError("Signup Failed", 500));
+  }
+
+  res.status(201).json({ user: newUser.toObject({ getters: true }) });
 };
 
 const login = (req, res, next) => {
-	
-	//Validating Express-Validator MiddleWare
-	const errors = validationResult(req);
-	if(!errors.isEmpty()){
-	  throw new HttpError("Invalid Field Values", 422)
-	}
+  //Validating Express-Validator MiddleWare
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError("Invalid Field Values", 422));
+  }
 
-	const {email, password} = req.body;
+  const { email, password } = req.body;
 
-	const identifiedUser = DUMMY_USERS.find(u=> u.email === email);
+  const identifiedUser = DUMMY_USERS.find((u) => u.email === email);
 
-	if(!identifiedUser || identifiedUser.password !== password){
-		throw new HttpError("Invalid Credential. User Not Found", 401)
-	}
+  if (!identifiedUser || identifiedUser.password !== password) {
+    return next(new HttpError("Invalid Credential. User Not Found", 401));
+  }
 
-	res.json({message: "Logged In "});
-
+  res.json({ message: "Logged In " });
 };
 
 exports.getUsers = getUsers;

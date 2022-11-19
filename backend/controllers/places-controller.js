@@ -12,11 +12,11 @@ const getPlaceById = async (req, res, next) => {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
-    throw new HttpError("Something Went Wrong ! Could not find a place", 500);
+    return next(new HttpError("Something Went Wrong ! Could not find a place", 500));
   }
 
   if (!place) {
-    throw new HttpError("Could not Find Place with this Id", 404);
+    return next(new HttpError("Could not Find Place with this Id", 404));
   }
 
   res.json({ place: place.toObject({ getters: true }) }); // getters = true , to remove _ from _id
@@ -31,7 +31,7 @@ const getPlacesByUserId = async (req, res, next) => {
     // Find By Creator Id In DB
     places = await Place.find({ creator: userID });
   } catch (error) {
-    throw new HttpError("Fetching Places failed. Please Try Again", 500);
+    return next(new HttpError("Fetching Places failed. Please Try Again", 500));
   }
 
   if (!places || places.length === 0) {
@@ -56,7 +56,7 @@ const createPlace = async (req, res, next) => {
   const { title, description, address, creator } = req.body;
 
   let coordinates;
-  // getAddressCoordinates might throw error
+  // getAddressCoordinates might return error
   try {
     coordinates = await getAddressCoords(address);
   } catch (error) {
@@ -77,7 +77,7 @@ const createPlace = async (req, res, next) => {
   try {
     await createPlace.save();
   } catch (err) {
-    throw new HttpError("Error Creating Place", 500);
+    return next(new HttpError("Error Creating Place", 500));
   }
 
   res.status(201).json({ place: createdPlace });
@@ -89,7 +89,7 @@ const updatePlace = async (req, res, next) => {
   //Validating Express-Validator MiddleWare
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid Field Values", 422);
+    return next(new HttpError("Invalid Field Values", 422));
   }
 
   const { title, description } = req.body;
@@ -100,7 +100,7 @@ const updatePlace = async (req, res, next) => {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
-    throw new HttpError("Something Went Wrong ! Could not find a place", 500);
+    return next(new HttpError("Something Went Wrong ! Could not find a place", 500));
   }
 
   // UPdating Params
@@ -111,7 +111,7 @@ const updatePlace = async (req, res, next) => {
   try {
     await place.save();
   } catch (error) {
-    throw new HttpError('Something Went Wrong. Could not update place', 500)
+    return next(new HttpError('Something Went Wrong. Could not update place', 500));
   }
 
   res.status(200).json({ place: place.toObject({getters: true}) });
@@ -125,13 +125,13 @@ const deletePlace = async (req, res, next) => {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
-    throw new HttpError("Something Went Wrong ! Could not Delete place", 500);
+    return next(new HttpError("Something Went Wrong ! Could not Delete place", 500));
   }
 
   try {
     await place.remove();
   } catch (error) {
-    throw new HttpError("Something Went Wrong ! Could not Delete place", 500);
+    return next(new HttpError("Something Went Wrong ! Could not Delete place", 500));
   }
 
   res.status(200).json({ message: "Place Deleted" });
