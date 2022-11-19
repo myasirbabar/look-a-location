@@ -23,8 +23,15 @@ const DUMMY_USERS = [
   },
 ];
 
-const getUsers = (req, res, next) => {
-  res.json(DUMMY_USERS);
+const getUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, "-password");
+  } catch (err) {
+    return next(new HttpError("Fetching Failed! Please try again later", 500));
+  }
+
+  res.json({ users: users.map((u) => u.toObject({ getters: true })) });
 };
 
 const signup = async (req, res, next) => {
@@ -34,7 +41,7 @@ const signup = async (req, res, next) => {
     return next(new HttpError("Invalid Field Values", 422));
   }
 
-  const { name, email, password,places } = req.body;
+  const { name, email, password, places } = req.body;
 
   // Check if email already exist
   let existingUser;
