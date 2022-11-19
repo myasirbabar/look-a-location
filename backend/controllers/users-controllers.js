@@ -68,7 +68,7 @@ const signup = async (req, res, next) => {
   res.status(201).json({ user: newUser.toObject({ getters: true }) });
 };
 
-const login = (req, res, next) => {
+const login = async (req, res, next) => {
   //Validating Express-Validator MiddleWare
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -77,10 +77,17 @@ const login = (req, res, next) => {
 
   const { email, password } = req.body;
 
-  const identifiedUser = DUMMY_USERS.find((u) => u.email === email);
+  // Check if email already exist
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (error) {
+    return next(new HttpError("Log in Failed ! Please try Again Later", 500));
+  }
 
-  if (!identifiedUser || identifiedUser.password !== password) {
-    return next(new HttpError("Invalid Credential. User Not Found", 401));
+  // If Already exist
+  if (!existingUser || existingUser.password !== password) {
+    return next(new HttpError("Invalid Credentials !", 401));
   }
 
   res.json({ message: "Logged In " });
