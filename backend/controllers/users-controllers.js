@@ -2,26 +2,6 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const User = require("../models/user.model");
 
-const DUMMY_USERS = [
-  {
-    id: "u1",
-    name: "Muhammad Yasir",
-    email: "ybabar1@gmail.com",
-    password: "tester1",
-  },
-  {
-    id: "u2",
-    name: "Usama Akram",
-    email: "ua@gmail.com",
-    password: "tester2",
-  },
-  {
-    id: "u3",
-    name: "Muhammad Awais",
-    email: "awais@gmail.com",
-    password: "tester3",
-  },
-];
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -41,7 +21,7 @@ const signup = async (req, res, next) => {
     return next(new HttpError("Invalid Field Values", 422));
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   // Check if email already exist
   let existingUser;
@@ -63,7 +43,7 @@ const signup = async (req, res, next) => {
     password,
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoOJWdWQyCnVGZ2iMwrA24be1XHiruDZIf71lMcul7&s",
-    places,
+    places: [],
   });
 
   try {
