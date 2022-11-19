@@ -1,8 +1,9 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const getAddressCoords = require("../util/location");
-const { v4: uuidv4 } = require("uuid");
 const Place = require("../models/place.model");
+const User = require("../models/user.model");
+const { default: mongoose } = require("mongoose");
 
 const getPlaceById = async (req, res, next) => {
   console.log("Get Places Request In Places");
@@ -73,9 +74,32 @@ const createPlace = async (req, res, next) => {
     creator,
   });
 
+  // Check if user Id exist in DB or not
+  let user;
+  try {
+    user = await User.findById(creator);
+  } catch (error) {
+    return next(new HttpError("Error Creating Place", 500));
+  }
+
+  if(!user){
+    return next(new HttpError("Could Not Find User", 404));
+  }
+
+
   // Save in database
   try {
-    await createPlace.save();
+
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    
+    await createdPlace.save({session: sess});
+    user.places.push(createPlace);
+    await user.save({session: sess});
+
+    await sess.commitTransaction();
+
+
   } catch (err) {
     return next(new HttpError("Error Creating Place", 500));
   }
