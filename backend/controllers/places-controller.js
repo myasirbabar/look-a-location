@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const getAddressCoords = require("../util/location");
 const Place = require("../models/place.model");
 const User = require("../models/user.model");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 const getPlaceById = async (req, res, next) => {
   console.log("Get Places Request In Places");

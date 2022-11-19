@@ -35,7 +35,7 @@ app.use((error, req, res, next) => {
 
 // If Database Connection is successfull start backend server
 mongoose
-  .connect("mongodb+srv://myb:IVcrP8z4PX2a42Q4@cluster0.ossa8dp.mongodb.net/places?retryWrites=true&w=majority")
+  .connect("mongodb+srv://myb:IVcrP8z4PX2a42Q4@cluster0.ossa8dp.mongodb.net/database?retryWrites=true&w=majority")
   .then(() => {
     // INIT SERVER
     app.listen(port, () =>
