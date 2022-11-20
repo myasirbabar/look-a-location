@@ -94,11 +94,13 @@ const createPlace = async (req, res, next) => {
     sess.startTransaction();
 
     await createdPlace.save({ session: sess });
-    user.places.push(createPlace);
+    user.places.push(createdPlace);
     await user.save({ session: sess });
 
     await sess.commitTransaction();
+
   } catch (err) {
+    console.log(err);
     return next(new HttpError("Error Creating Place", 500));
   }
 
@@ -125,6 +127,11 @@ const updatePlace = async (req, res, next) => {
     return next(
       new HttpError("Something Went Wrong ! Could not find a place", 500)
     );
+  }
+
+  // Check if the place does not exist
+  if(!place){
+    return next(new HttpError('No place with this Id Exist', 404));
   }
 
   // UPdating Params
