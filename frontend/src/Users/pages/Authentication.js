@@ -40,8 +40,7 @@ const Authentication = (props) => {
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
-    } 
-	else {
+    } else {
       setFormData(
         {
           ...formState.inputs,
@@ -56,9 +55,35 @@ const Authentication = (props) => {
     setIsLogin((prevMode) => !prevMode);
   };
 
-  const authSubmitHandler = (event) => {
+  const authSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
+
+    if (isLogin) {
+      // Sending Request To Backend for Login
+    } else {
+      // Sending Request To Backend for signup
+      let response;
+      try {
+        response = await fetch("http://localhost:5000/api/users/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const resData = await response.json();
+        console.log(resData);
+        
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     auth.login();
   };
 

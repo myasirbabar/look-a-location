@@ -11,6 +11,17 @@ const port = 5000;
 // Body Parser
 app.use(bodyParser.json());
 
+// Handle CORS Error
+app.use((req,res,next) => {
+  // Which domain shoudl be allowed
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  res.setHeader('Access-Control-Allow-Headers', 'Origin,Content-Type, Accept, Authorization, X-Requested-With');
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  next();
+})
+
 // Register MiddleWare For Places
 app.use("/api/places", placesRoutes); // Places
 
