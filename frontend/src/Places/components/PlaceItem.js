@@ -68,7 +68,7 @@ const PlaceItem = ({ place }) => {
       <li className="place-item">
         <Card className="place-item">
           <div className="place-item__image">
-            <img src={place.imageURL} alt={place.title} />
+            <img src={place.image} alt={place.title} />
           </div>
 
           <div className="place-item__info">
