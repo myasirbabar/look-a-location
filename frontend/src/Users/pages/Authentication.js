@@ -62,14 +62,38 @@ const Authentication = (props) => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
+    setIsLoading(true);
+
     if (isLogin) {
       // Sending Request To Backend for Login
+      let response;
+      try {
+        response = await fetch("http://localhost:5000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const resData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(resData.message);
+        }
+
+        auth.login();
+      } catch (error) {
+        console.log(error);
+        setError(error.message || "Unknown error occured");
+      }
     } else {
       // Sending Request To Backend for signup
       let response;
       try {
-        setIsLoading(true);
-
         response = await fetch("http://localhost:5000/api/users/signup", {
           method: "POST",
           headers: {
@@ -83,7 +107,6 @@ const Authentication = (props) => {
         });
 
         const resData = await response.json();
-        console.log(resData);
 
         if (!response.ok) {
           throw new Error(resData.message);
@@ -94,8 +117,8 @@ const Authentication = (props) => {
         console.log(error);
         setError(error.message || "Unknown error occured");
       }
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (

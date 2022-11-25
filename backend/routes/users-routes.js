@@ -12,7 +12,7 @@ router.post(
   [
     check("name").notEmpty(),
     check("email").normalizeEmail().isEmail(),
-    check("password").isLength({min: 6})
+    check("password").isLength({min: 5})
   ],
   usersController.signup
 );
@@ -20,7 +20,7 @@ router.post(
 // Login
 router.post(
   "/login",
-  [check("email").normalizeEmail().isEmail(), check("password").isLength({min: 6})],
+  [check("email").normalizeEmail().isEmail(), check("password").isLength({min: 5})],
   usersController.login
 );
 
