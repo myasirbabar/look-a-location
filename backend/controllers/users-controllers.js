@@ -2,7 +2,6 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const User = require("../models/user.model");
 
-
 const getUsers = async (req, res, next) => {
   let users;
   try {
@@ -77,7 +76,10 @@ const login = async (req, res, next) => {
     return next(new HttpError("Invalid Credentials !", 401));
   }
 
-  res.json({ message: "Logged In " });
+  res.json({
+    message: "Logged In ",
+    user: existingUser.toObject({ getters: true }),
+  });
 };
 
 exports.getUsers = getUsers;

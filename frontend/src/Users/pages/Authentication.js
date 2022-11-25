@@ -65,7 +65,7 @@ const Authentication = (props) => {
     if (isLogin) {
       // Sending Request To Backend for Login
       try {
-        await sendRequest(
+        const resdata = await sendRequest(
           "http://localhost:5000/api/users/login",
           "POST",
           JSON.stringify({
@@ -76,12 +76,12 @@ const Authentication = (props) => {
             "Content-Type": "application/json",
           }
         );
-        auth.login();
+        auth.login(resdata.user.id);
       } catch (error) {}
     } else {
       // Sending Request To Backend for signup
       try {
-        await sendRequest(
+        const resdata = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
           JSON.stringify({
@@ -94,7 +94,7 @@ const Authentication = (props) => {
           }
         );
 
-        auth.login();
+        auth.login(resdata.user.id);
       } catch (error) {}
     }
   };
