@@ -87,7 +87,6 @@ const Authentication = (props) => {
 
         auth.login();
       } catch (error) {
-        console.log(error);
         setError(error.message || "Unknown error occured");
       }
     } else {

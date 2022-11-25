@@ -1,32 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UsersList from "../components/UsersList";
+import ErrorModal from "../../Shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../Shared/components/UIElements/LoadingSpinner";
 
 const Users = () => {
-  const USERS = [
-    {
-      id: "u1",
-      name: "Muhammad Yasir",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoOJWdWQyCnVGZ2iMwrA24be1XHiruDZIf71lMcul7&s",
-      placeCount: 3,
-    },
-    {
-      id: "u2",
-      name: "Usama Akram",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoOJWdWQyCnVGZ2iMwrA24be1XHiruDZIf71lMcul7&s",
-      placeCount: 5,
-    },
-    {
-      id: "u3",
-      name: "Muhammad Awais",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoOJWdWQyCnVGZ2iMwrA24be1XHiruDZIf71lMcul7&s",
-      placeCount: 3,
-    }
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+  const [loadedUsers, setLoadedUsers] = useState();
 
-  return <UsersList listUsers={USERS} />;
+  useEffect(() => {
+    const sendRequest = async () => {
+      setIsLoading(true);
+
+      let response;
+      try {
+        response = await fetch("http://localhost:5000/api/users"); // by default it is get request
+
+        const resdata = await response.json();
+
+        if (!response.ok) {
+          throw new Error(resdata.message);
+        }
+
+        setLoadedUsers(resdata.users);
+      } catch (error) {
+        setError(error.message || "Unknown error occured");
+      }
+      setIsLoading(false);
+    };
+
+    sendRequest();
+  }, []);
+
+  const errorHandler = () => {
+    setError(null);
+  };
+
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={errorHandler} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && loadedUsers && <UsersList listUsers={loadedUsers} />}
+    </React.Fragment>
+  );
 };
 
 export default Users;
