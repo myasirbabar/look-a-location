@@ -1,4 +1,4 @@
-import React, { useEffect, useState }  from "react";
+import React, { useEffect, useState } from "react";
 import PlaceList from "../components/PlaceList";
 import { useParams } from "react-router-dom";
 import ErrorModal from "../../Shared/components/UIElements/ErrorModal";
@@ -13,7 +13,9 @@ const UserPlaces = () => {
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const resdata = await sendRequest(`http://localhost:5000/api/places/user/${userId}`); // by default it is get request
+        const resdata = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`
+        ); // by default it is get request
 
         setLoadedPlaces(resdata.places);
       } catch (error) {}
@@ -21,6 +23,12 @@ const UserPlaces = () => {
 
     fetchPlaces();
   }, [sendRequest, userId]);
+
+  const placeDeletedHandler = (deletedPlaceId) => {
+    setLoadedPlaces((prev) =>
+      prev.filter((place) => place.id !== deletedPlaceId)
+    );
+  };
 
   return (
     <React.Fragment>
@@ -30,7 +38,12 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedPlaces && <PlaceList listPlaces={loadedPlaces} />}
+      {!isLoading && loadedPlaces && (
+        <PlaceList
+          listPlaces={loadedPlaces}
+          onDeletePlace={placeDeletedHandler}
+        />
+      )}
     </React.Fragment>
   );
 };
