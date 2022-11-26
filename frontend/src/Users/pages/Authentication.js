@@ -5,6 +5,7 @@ import LoadingSpinner from "../../Shared/components/UIElements/LoadingSpinner";
 import Input from "../../Shared/components/FormElements/Input";
 import ErrorModal from "../../Shared/components/UIElements/ErrorModal";
 import Button from "../../Shared/components/FormElements/Button";
+import ImageUpload from "../../Shared/components/FormElements/ImageUpload";
 import { useHttpClient } from "../../Shared/hooks/http-hook";
 import {
   VALIDATOR_EMAIL,
@@ -41,6 +42,7 @@ const Authentication = (props) => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -52,6 +54,10 @@ const Authentication = (props) => {
             value: "",
             isValid: false,
           },
+          image:{
+            value: null,
+            isValid: false,
+          }
         },
         false
       );
@@ -61,6 +67,7 @@ const Authentication = (props) => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
+    console.log(formState.inputs);
 
     if (isLogin) {
       // Sending Request To Backend for Login
@@ -101,10 +108,7 @@ const Authentication = (props) => {
 
   return (
     <React.Fragment>
-      <ErrorModal
-        error={error}
-        onClear={clearError}
-      />
+      <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>{isLogin ? "Login Required" : "Signup "}</h2>
@@ -122,6 +126,11 @@ const Authentication = (props) => {
               onInput={inputHandler}
             />
           )}
+
+          {!isLogin && (
+            <ImageUpload id="image" center={true}  onInput={inputHandler} />
+          )}
+
           <Input
             id="email"
             element="input"
