@@ -42,7 +42,7 @@ const Authentication = (props) => {
         {
           ...formState.inputs,
           name: undefined,
-          image: undefined
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -54,10 +54,10 @@ const Authentication = (props) => {
             value: "",
             isValid: false,
           },
-          image:{
+          image: {
             value: null,
             isValid: false,
-          }
+          },
         },
         false
       );
@@ -67,7 +67,6 @@ const Authentication = (props) => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
 
     if (isLogin) {
       // Sending Request To Backend for Login
@@ -88,17 +87,16 @@ const Authentication = (props) => {
     } else {
       // Sending Request To Backend for signup
       try {
+        const formData = new FormData();
+        formData.append("email", formState.inputs.email.value);
+        formData.append("name", formState.inputs.name.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
+
         const resdata = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          formData
         );
 
         auth.login(resdata.user.id);
@@ -128,7 +126,7 @@ const Authentication = (props) => {
           )}
 
           {!isLogin && (
-            <ImageUpload id="image" center={true}  onInput={inputHandler} />
+            <ImageUpload id="image" center={true} onInput={inputHandler} />
           )}
 
           <Input
