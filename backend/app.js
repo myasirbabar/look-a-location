@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const HttpError = require("./models/http-error");
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
-
+const fs = require('fs');
 const app = express();
 const port = 5000;
 
@@ -36,6 +36,15 @@ app.use((req, res, next) => {
 
 // Error Middleware
 app.use((error, req, res, next) => {
+  // Delete File Stored if any error occurs
+  // Because File first stored
+  // and then is saved in database, but if the error occurs
+  // Then we should roll back the file upload
+  if(req.file){
+    fs.unlink(req.file.path, (err)=>{
+      console.log(err);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }
