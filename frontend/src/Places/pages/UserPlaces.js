@@ -38,7 +38,7 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedPlaces && (
+      {!isLoading && (
         <PlaceList
           listPlaces={loadedPlaces}
           onDeletePlace={placeDeletedHandler}

@@ -5,12 +5,12 @@ import Button from '../../Shared/components/FormElements/Button'
 import './PlaceList.css'
 
 const PlaceList = ({listPlaces, onDeletePlace}) => {
-    if(listPlaces.length === 0){
+    if(!listPlaces){
         return (
             <div className='place-list center'>
                 <Card>
                     <h2>No PLace Exist... May be Create One</h2>
-                    <Button inverse to = "/new/places">Create Place</Button>
+                    <Button inverse to = "/places/new">Create Place</Button>
                 </Card>
             </div>
         )
