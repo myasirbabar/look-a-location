@@ -126,7 +126,12 @@ const Authentication = (props) => {
           )}
 
           {!isLogin && (
-            <ImageUpload id="image" center={true} onInput={inputHandler} />
+            <ImageUpload
+              id="image"
+              center={true}
+              onInput={inputHandler}
+              errorText="Please Input Valid Image"
+            />
           )}
 
           <Input

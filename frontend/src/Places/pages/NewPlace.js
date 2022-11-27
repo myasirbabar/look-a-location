@@ -2,9 +2,10 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../../Shared/components/FormElements/Input";
 import Button from "../../Shared/components/FormElements/Button";
-import {useHttpClient} from "../../Shared/hooks/http-hook";
+import { useHttpClient } from "../../Shared/hooks/http-hook";
 import ErrorModal from "../../Shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../Shared/components/UIElements/LoadingSpinner";
+import ImageUpload from "../../Shared/components/FormElements/ImageUpload";
 import { useForm } from "../../Shared/hooks/form-hook";
 import { AuthContext } from "../../Shared/context/auth-context";
 
@@ -29,30 +30,38 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      address: {
+        value: "",
+        isValid: false,
+      },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
 
   const history = useNavigate();
-  
-  const placeSubmitHandler = async event => {
+
+  const placeSubmitHandler = async (event) => {
     event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('title', formstate.inputs.title.value);
+    formData.append('description', formstate.inputs.description.value);
+    formData.append('address', formstate.inputs.address.value);
+    formData.append('creator', auth.userId);
+    formData.append('image', formstate.inputs.image.value);
+    
     try {
       await sendRequest(
         "http://localhost:5000/api/places",
         "POST",
-        JSON.stringify({
-          title: formstate.inputs.title.value,
-          description: formstate.inputs.description.value,
-          address: formstate.inputs.address.value,
-          creator: auth.userId,
-        }),
-        {
-          'content-type':'application/json'
-        }
+        formData
       );
 
-      history('/');
+      history("/");
     } catch (error) {}
   };
 
@@ -94,11 +103,17 @@ const NewPlace = () => {
           onInput={inputHandler}
         />
 
+        <ImageUpload
+          id="image"
+          center={true}
+          onInput={inputHandler}
+          errorText="Please Input Valid Image"
+        />
+
         <Button type="submit" disabled={!formstate.isValid}>
           Add Place
         </Button>
       </form>
-
     </React.Fragment>
   );
 };

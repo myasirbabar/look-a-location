@@ -72,7 +72,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image: "https://pucit.edu.pk/wp-content/uploads/2021/09/dap9_n-1.jpg",
+    image: req.file.path,
     creator,
   });
 
