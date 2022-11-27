@@ -5,11 +5,14 @@ const HttpError = require("./models/http-error");
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
 const fs = require('fs');
+const path = require('path');
 const app = express();
 const port = 5000;
 
 // Body Parser
 app.use(bodyParser.json());
+
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 // Handle CORS Error
 app.use((req,res,next) => {
