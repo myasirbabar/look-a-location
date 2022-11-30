@@ -1,6 +1,7 @@
 const express = require("express");
 const { check } = require("express-validator");
 const placesController = require("../controllers/places-controller");
+const checkAuth = require("../middleware/check-auth");
 const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
@@ -10,6 +11,9 @@ router.get("/:pid", placesController.getPlaceById);
 
 // Get User Places
 router.get("/user/:uid", placesController.getPlacesByUserId);
+
+// Check if token is valid
+router.use(checkAuth)
 
 // Add PLace
 router.post(
