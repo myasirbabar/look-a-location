@@ -135,6 +135,11 @@ const updatePlace = async (req, res, next) => {
     return next(new HttpError('No place with this Id Exist', 404));
   }
 
+  // Check if user is allowed to update or not
+  if(place.creator.toString() !== req.userData.userId){
+    return next(new HttpError("Not authorized", 401));
+  }
+
   // UPdating Params
   place.title = title;
   place.description = description;
@@ -167,6 +172,11 @@ const deletePlace = async (req, res, next) => {
 
   if(!place){
     return next(new HttpError('Could not find place for this ID', 404));
+  }
+
+  // Check if user is allowed to update or not
+  if(place.creator.id !== req.userData.userId){
+    return next(new HttpError("Not authorized", 401));
   }
 
   const imagePath = place.image;
