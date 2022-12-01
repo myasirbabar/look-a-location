@@ -1,4 +1,4 @@
-import React, { useCallback, useState,useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 /*
   Changes are 
   * Switch is replaced with Routes
@@ -23,12 +23,17 @@ const App = () => {
   const [token, setToken] = useState();
   const [userId, setUserId] = useState();
 
-  
-  const login = useCallback((uid, token) => {
+  const login = useCallback((uid, token, expirationTime) => {
     setToken(token);
+    const tokenExpireTime =
+      expirationTime || new Date(new Date().getTime() + 1000 * 60 * 60);
     localStorage.setItem(
-      'userData',
-      JSON.stringify({ userId: uid, token: token })
+      "userData",
+      JSON.stringify({
+        userId: uid,
+        token: token,
+        expiration: tokenExpireTime.toISOString(),
+      })
     );
     setUserId(uid);
   }, []);
@@ -41,13 +46,19 @@ const App = () => {
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
-    console.log(storedData)
-    if(storedData && storedData.token){
-      login(storedData.userId, storedData.token)
+    console.log(storedData);
+    if (
+      storedData &&
+      storedData.token &&
+      new Date(storedData.expiration) > new Date()
+    ) {
+      login(
+        storedData.userId,
+        storedData.token,
+        new Date(storedData.expiration)
+      );
     }
-  }, [login])
-  
-
+  }, [login]);
 
   let routes;
 
