@@ -82,7 +82,7 @@ const Authentication = (props) => {
             "Content-Type": "application/json",
           }
         );
-        auth.login(resdata.user.id);
+        auth.login(resdata.userId, resdata.token);
       } catch (error) {}
     } else {
       // Sending Request To Backend for signup
@@ -99,7 +99,7 @@ const Authentication = (props) => {
           formData
         );
 
-        auth.login(resdata.user.id);
+        auth.login(resdata.userId, resdata.token);
       } catch (error) {}
     }
   };
