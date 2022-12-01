@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState,useEffect } from "react";
 /*
   Changes are 
   * Switch is replaced with Routes
@@ -23,15 +23,31 @@ const App = () => {
   const [token, setToken] = useState();
   const [userId, setUserId] = useState();
 
+  
   const login = useCallback((uid, token) => {
     setToken(token);
+    localStorage.setItem(
+      'userData',
+      JSON.stringify({ userId: uid, token: token })
+    );
     setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+    localStorage.removeItem("userData");
   }, []);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+    console.log(storedData)
+    if(storedData && storedData.token){
+      login(storedData.userId, storedData.token)
+    }
+  }, [login])
+  
+
 
   let routes;
 
