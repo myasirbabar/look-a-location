@@ -57,7 +57,7 @@ const createPlace = async (req, res, next) => {
     return next(new HttpError("Invalid Field Values", 422));
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address } = req.body;
 
   let coordinates;
   // getAddressCoordinates might return error
@@ -74,13 +74,13 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
-    creator,
+    creator: req.userData.userId,
   });
 
   // Check if user Id exist in DB or not
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (error) {
     return next(new HttpError("Error Creating Place", 500));
   }

@@ -51,7 +51,6 @@ const NewPlace = () => {
     formData.append('title', formstate.inputs.title.value);
     formData.append('description', formstate.inputs.description.value);
     formData.append('address', formstate.inputs.address.value);
-    formData.append('creator', auth.userId);
     formData.append('image', formstate.inputs.image.value);
     
     try {
