@@ -19,14 +19,18 @@ import UserPlaces from "./Places/pages/UserPlaces";
 import UpdatePlace from "./Places/pages/UpdatePlace";
 import Authentication from "./Users/pages/Authentication";
 
+let logoutTimer;
+
 const App = () => {
   const [token, setToken] = useState();
+  const [tokenExpireTime, setTokenExpireTime] = useState();
   const [userId, setUserId] = useState();
 
   const login = useCallback((uid, token, expirationTime) => {
     setToken(token);
-    const tokenExpireTime =
-      expirationTime || new Date(new Date().getTime() + 1000 * 60 * 60);
+    const tokenExpireTime = expirationTime || new Date(new Date().getTime() + 1000 * 60 * 60);
+    setTokenExpireTime(tokenExpireTime);
+
     localStorage.setItem(
       "userData",
       JSON.stringify({
@@ -41,12 +45,12 @@ const App = () => {
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+    setTokenExpireTime(null);
     localStorage.removeItem("userData");
   }, []);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
-    console.log(storedData);
     if (
       storedData &&
       storedData.token &&
@@ -59,6 +63,16 @@ const App = () => {
       );
     }
   }, [login]);
+
+  useEffect(()=>{
+    if(token && tokenExpireTime){
+      const remTime = tokenExpireTime.getTime() - new Date().getTime();
+      logoutTimer = setTimeout(logout, remTime);
+    }
+    else{
+      clearTimeout(logoutTimer);
+    }
+  }, [token, logout, tokenExpireTime])
 
   let routes;
 
