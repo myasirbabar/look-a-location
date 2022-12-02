@@ -12,7 +12,7 @@ module.exports = (req,res,next)=>{
 			throw new Error();
 		}
 
-		const deCoded = jwt.verify(token, 'super_secret_dont_share');
+		const deCoded = jwt.verify(token, process.env.JWT_KEY);
 
 		req.userData = {userId: deCoded.userId};
 		next();

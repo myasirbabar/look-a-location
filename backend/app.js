@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 const port = 5000;
+require('dotenv').config();
 
 // Body Parser
 app.use(bodyParser.json());
@@ -58,7 +59,7 @@ app.use((error, req, res, next) => {
 
 // If Database Connection is successfull start backend server
 mongoose
-  .connect("mongodb+srv://myb:IVcrP8z4PX2a42Q4@cluster0.ossa8dp.mongodb.net/database?retryWrites=true&w=majority")
+  .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ossa8dp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`)
   .then(() => {
     // INIT SERVER
     app.listen(port, () =>
