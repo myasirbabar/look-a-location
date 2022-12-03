@@ -7,8 +7,8 @@ const usersRoutes = require("./routes/users-routes");
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const port = 5000;
 require('dotenv').config();
+const port = process.env.PORT;
 
 // Body Parser
 app.use(bodyParser.json());

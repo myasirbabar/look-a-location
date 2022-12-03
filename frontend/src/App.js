@@ -20,6 +20,17 @@ import UpdatePlace from "./Places/pages/UpdatePlace";
 import Authentication from "./Users/pages/Authentication";
 import { useAuth } from "./Shared/hooks/auth-hook";
 
+/* // Using React Lazy
+const NewPlace = React.lazy(() => import("./Places/pages/NewPlace"));
+const MainNavigation = React.lazy(() =>
+  import("./Shared/components/Navigation/MainNavigation")
+);
+const Users = React.lazy(() => import("./Users/pages/Users"));
+const UserPlaces = React.lazy(() => import("./Places/pages/UserPlaces"));
+const UpdatePlace = React.lazy(() => import("./Places/pages/UpdatePlace"));
+const Authentication = React.lazy(() => import("./Users/pages/Authentication"));
+ */
+
 const App = () => {
   const {token, login, logout, userId} = useAuth();
   
