@@ -8,13 +8,13 @@ import LoadingSpinner from "../../Shared/components/UIElements/LoadingSpinner";
 import ImageUpload from "../../Shared/components/FormElements/ImageUpload";
 import { useForm } from "../../Shared/hooks/form-hook";
 import { AuthContext } from "../../Shared/context/auth-context";
-
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../Shared/components/util/Validators";
 
 import "./PlaceForm.css";
+
 
 const NewPlace = () => {
   const auth = useContext(AuthContext);
@@ -55,7 +55,7 @@ const NewPlace = () => {
     
     try {
       await sendRequest(
-        "http://localhost:5000/api/places",
+        process.env.REACT_APP_BACKEND_URL + "/places",
         "POST",
         formData,
         {
